@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Geoplus</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <!--kaart-->
+        <link rel="stylesheet" href="css/ol.css" type="text/css">
+        <script src="src/ol-debug.js" type="text/javascript"></script>
+        <script src="src/proj4.js" type="text/javascript"></script>
+        <script src="http://epsg.io/31370.js" type="text/javascript"></script>
+        <script src="src/download.js" type="text/javascript"></script> 
+        <script src="src/terraformer.min.js" type="text/javascript"></script> 
+        <script src="src/terraformer-arcgis-parser-1.0.4.min.js" type="text/javascript"></script> 
+    <style>
+        .wrapper { height: 99%; width: 100%; border: 1px solid black; overflow: hidden; }
+        .mapTab { width: 30%; float:left; border: 1px solid black;}
+        .listBox { width: 200px;  }
+        .overflow { height: 200px; }
+        .resultTab {width:69%; float: left; margin-left:10px;} 
+        .external {  height: 99%; width: 99%;  }
+        .dlg {font-size: 11px;}
+        #map { height: calc(100% - 40px); width: 100%; background-color: #b0c4de; }   
+    </style>
+    <!--My stuff-->
+        <script src="map.js" type="text/javascript"></script>
+        <script src="mapEvents.js" type="text/javascript"></script>        
+        <script src="ui.js" type="text/javascript"></script>
+        <script src="geocoder.js" type="text/javascript"></script>
+        <script src="main.js" type="text/javascript"></script>   
+  </head>
+  <body>
+
+       <div id="toolbar" class="ui-widget-header ui-corner-all">
+              <label for="adres">Adres: </label> <input id="adres">
+              
+              <select class="listBox" id="dataList" > </select>
+              
+              <button id="saveBtn" type="button">Opslaan</button>
+             
+              <label for="radio">output formaat:</label><span id="radio">
+                <input type="radio" id="geoJsonChk" name="radio" checked><label for="geoJsonChk">GeoJSON</label>
+                <input type="radio" id="gpxChk" name="radio" ><label for="gpxChk">GPX</label>
+                <input type="radio" id="shpChk" name="radio"><label for="shpChk">Arcgis JSON</label>
+             </span>
+       </div>         
+
+      <div id="map" ></div>
+      <div id="result" ></div>
+      <div id="info" class="dlg" ><div/>
+  </div>
+  </body>
+</html>
