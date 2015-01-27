@@ -1,5 +1,5 @@
 
-function initUI( map, vectorLayer, featureOverlay ){
+module.exports = function initUI( map, vectorLayer, featureOverlay ){
  
     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
     .done( function(resp)  {
@@ -32,7 +32,7 @@ function initUI( map, vectorLayer, featureOverlay ){
         if( document.getElementById('geoJsonChk').checked ){
             var gjsParser = new ol.format.GeoJSON();
             var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                        {dataProjection: outSRS, featureProjection:'EPSG:31370'} );
+                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});
             downloadString( gjs, laagName +".json" , "text/plain");
         }
         else if( document.getElementById('gpxChk').checked ){
@@ -111,7 +111,6 @@ function initUI( map, vectorLayer, featureOverlay ){
     vectorLayer.setSource(vectorSource); 
     
     var displayData = function( url ) { 
-        console.log(url)
         vectorSource.clear(1)
         $.ajax({ url: url, dataType: 'json'}).done(function(resp) {
             var pages = resp.paging.pages 
@@ -141,8 +140,13 @@ function initUI( map, vectorLayer, featureOverlay ){
                 delete item.point_lat;
                 }
             else if( item.geometry ) {
+                try{
                 geometry = gjsParser.readGeometry( item.geometry, {
-                                    featureProjection:'EPSG:31370', dataProjection:'EPSG:4326'});
+                                    featureProjection:'EPSG:31370', dataProjection:'EPSG:4326'});            
+                }
+                catch(ero) {
+                    console.log("Kon geometry op record "+ item.id + " niet parseren" )
+                }
                 delete item.geometry;
             }
             else { 

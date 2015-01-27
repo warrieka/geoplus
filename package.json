@@ -4,7 +4,8 @@
   "description": "Geoplus is een open data naar geodataformaten transformer",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "prestart": "browserify src/main.js -o public/src/geoplus.js"
   },
   "keywords": [
     "opendata",
@@ -16,13 +17,14 @@
   "dependencies": {
     "cheerio": "^0.18.0",
     "express": "^4.11.0",
-    "request": "^2.51.0"
+    "request": "^2.51.0",
+    "shp-write": "^0.2.1"
   },
   "engines": {
     "node": "0.10.x"
   },
-  "repository" :
-  { "type" : "git", 
-    "url" : "https://github.com/warrieka/geoplus.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/warrieka/geoplus.git"
   }
 }

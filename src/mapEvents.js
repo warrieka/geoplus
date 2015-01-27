@@ -1,4 +1,7 @@
-function mapEvents( map, vectorLayer, featureOverlay ){
+
+module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
+    
+    var dlg = $( "#info" ).dialog({ autoOpen: false });
     var highlight;
     /*event handlers*/
     this.displayFeatureInfo = function(pixel, map) {
@@ -47,5 +50,4 @@ function mapEvents( map, vectorLayer, featureOverlay ){
           } 
     });
     
-
-}    
+}   

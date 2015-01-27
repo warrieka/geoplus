@@ -1,5 +1,5 @@
 
-function Map( mapID ){
+module.exports = function MapObj( mapID ){
     styles = {
         'Point': [new ol.style.Style({
             image: new ol.style.Circle({
@@ -52,7 +52,7 @@ function Map( mapID ){
         }
     
     this.vectorLayer = new ol.layer.Vector({style: this.styleFunction}) ;   
-                
+    
     /*basiskaart*/ 
     var projectionExtent = [9928.00, 66928.00, 272072.00, 329072.00];
     var projection = ol.proj.get('EPSG:31370');
@@ -83,7 +83,7 @@ function Map( mapID ){
 
     this.map = new ol.Map({
             target: mapID,
-            layers: [ this.basiskaart, this.vectorLayer ],
+            layers: [ this.basiskaart, this.vectorLayer  ],
             view: new ol.View({
                 projection: 'EPSG:31370',
                 center: [152223, 213544],

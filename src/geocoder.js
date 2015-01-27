@@ -1,5 +1,5 @@
 
-function geocoder( geocoderInputID, map , featureOverlay){
+module.exports = function geocoder( geocoderInputID, map , featureOverlay){
     var marker;
     
     $( "#"+ geocoderInputID ).autocomplete({
