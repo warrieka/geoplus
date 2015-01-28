@@ -39,6 +39,6 @@ Shapefile wordt ondersteund op basis van een externe service.
 
 ###Andere kaart elementen 
 
-De basiskart is de grijze GRB van AGIV en de Geocoder (zoeken op adres) is de geolocation-tool uit CRAB. 
+De basiskaart is de grijze GRB van AGIV en de Geocoder (zoeken op adres) is de geolocation-tool uit CRAB. 
 http://agiv.be
 
