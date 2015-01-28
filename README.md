@@ -12,10 +12,12 @@ Nederlands
 ###Doelstelling 
 
 Geoplus is een webapp tegen de opendata infrastructuur van stad Antwerpen.
-De stad Anwerpen biedt een groot deel van zijn data aan, aan externen via http://opendata.antwerpen.be, waaronder veel geodata. Voor gewone burgers die data willen raadplegen is het mogelijk dit te doen via google earth een kml-file die ze kunnen downloaen of een preview Map. Programmeurs kunnen de JSON of XML formaten gebruiken. 
-Voor niet-programerdende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook Openstreetmap, GPS- en geocaching hobbyisten zijn de formaten niet geschikt. 
-Voor deze gebruikers probeert de app een oplossing te bieden.  
-Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat zodat ze die hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld voor analyse of cartografie. 
+De stad Anwerpen biedt een groot deel van zijn data waaronder geodata als opendata aan. Externen kunnen via http://opendata.antwerpen.be deze gegevens downloaden. Voor gewone burgers die data willen raadplegen is het mogelijk dit te doen via google earth met een kml-file die ze kunnen downloaen of sinds kort via een preview Map. Programmeurs kunnen de JSON of XML formaten gebruiken. 
+
+Voor niet-programerdende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook voor Openstreetmap, GPS- en geocaching hobbyisten zijn deze formaten niet geschikt. 
+Voor deze gebruikers probeert deze app een oplossing te bieden.  
+
+Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat, zodat ze die op hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld geo/esri/shapefile json voor QGIS of Arcgis voor analyse en cartografie. Openstreetmappers kunnen de gewenste gegevens opladen via GPX, ook geocachers en andere gebruikers geavanceerde GPS-toestellen gebruiken GPX.   
 
 ###Werking
 
