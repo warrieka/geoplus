@@ -3,7 +3,7 @@ Geoplus
 
 English
 ----
-GeoPlus is a web app from the opendata infrastructure of Antwerp.
+GeoPlus is a web app on the opendata infrastructure of Antwerp.
 With this application, a non-programmer can download the data from the opendata-service in a common format for geodata and use in their own (desktop) applications. For example, for analysis or cartography.
 
 Nederlands 
