@@ -1,4 +1,214 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var download = require('./download.js');
+var openPost = require('./openPost.js');
+
+module.exports = function(vecSrc, outSRS){
+        
+        if( !(vecSrc && vecSrc.getFeatures().length) ){ return; }
+        
+        var lst = document.getElementById("dataList")
+        var laagName = lst.options[lst.selectedIndex].text;
+        
+        if( document.getElementById('geoJsonChk').checked ){
+            var gjsParser = new ol.format.GeoJSON();
+            var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
+                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});
+            download( gjs, laagName +".geojson" , "text/plain");
+        }
+        else if( document.getElementById('shpChk').checked ){
+            var gjsParser = new ol.format.GeoJSON();
+            var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
+                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});       
+            openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: gjs, outputName: laagName }, "_blank")
+        }
+        else if( document.getElementById('gpxChk').checked ){
+            var ftype = vecSrc.getFeatures()[0].getGeometry().getType();
+            if(ftype == "MultiPolygon" || ftype == "Polygon"){
+                alert("GPX kan enkel lijnen en punten opslaan");
+            }
+            else {
+                var gpxParser = new ol.format.GPX();
+                var gpx = gpxParser.writeFeatures( vecSrc.getFeatures(),
+                                        { dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
+                download( gml, laagName +".gpx" , "text/plain");
+            }
+        }
+        else if( document.getElementById('esriJSChk').checked ){
+            var gjsParser = new ol.format.GeoJSON();
+            var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
+                                        {dataProjection: outSRS, featureProjection:'EPSG:31370'} ));
+            
+            var arcjs =  Terraformer.ArcGIS.convert( gjs );
+            
+            var esriGeometry;
+            var ftype = gjs.features[0].geometry.type;
+            switch(ftype) {
+                case "Point":
+                    esriGeometry = "esriGeometryPoint";
+                    break;
+                case "LineString":
+                    esriGeometry = "esriGeometryPolyline";
+                    break;
+                case "MultiLineString":
+                    esriGeometry = "esriGeometryPolyline";
+                    break;
+                case "MultiPoint":
+                    esriGeometry = "esriGeometryMultipoint";
+                    break;
+                case "Polygon":
+                    esriGeometry = "esriGeometryPolygon";                
+                    break;          
+                case "MultiPolygon":
+                    esriGeometry = "esriGeometryPolygon";
+                    break;                
+                default:
+                    esriGeometry = null;
+            }
+            var esriFields = [] ;
+            for( var key in gjs.features[0].properties ){ 
+                feat = gjs.features[0].properties[key];
+                if( typeof(feat) == "number" ){ 
+                    esriFields.push({name:key, type:"esriFieldTypeDouble" }) 
+                }
+                else {
+                    esriFields.push({name:key, type:"esriFieldTypeString", length: 254 }) 
+                }
+            }
+                    
+            for( var i= 0; i < arcjs.length; i++ ){
+                delete arcjs[i].geometry.spatialReference  //remove wrong prj
+                delete arcjs[i].attributes.objectid  //can't have 2 objectID 's
+            }
+            var arcjsFull = { 
+                spatialReference : {latestWkid: parseInt(outSRS.replace("EPSG:","")) } ,
+                fields: esriFields,
+                geometryType: esriGeometry,
+                features: arcjs 
+            }                   
+            download( JSON.stringify(arcjsFull), laagName +".json" , "text/plain");
+        }
+    }
+
+},{"./download.js":2,"./openPost.js":7}],2:[function(require,module,exports){
+
+// modified from https://github.com/rndme/download
+// data can be a string, Blob, File, or dataURL
+
+module.exports = function (data, strFileName, strMimeType) {
+	
+	var self = window, // this script is only for browsers anyway...
+		u = "application/octet-stream", // this default mime also triggers iframe downloads
+		m = strMimeType || u, 
+		x = data,
+		D = document,
+		a = D.createElement("a"),
+		z = function(a){return String(a);},
+		B = (self.Blob || self.MozBlob || self.WebKitBlob || z);
+		B=B.call ? B.bind(self) : Blob ;
+		var fn = strFileName || "download",
+		blob, 
+		fr;
+
+	
+	if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+		x=[x, m];
+		m=x[0];
+		x=x[1]; 
+	}
+	
+	
+
+
+	//go ahead and download dataURLs right away
+	if(String(x).match(/^data\:[\w+\-]+\/[\w+\-]+[,;]/)){
+		return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+			navigator.msSaveBlob(d2b(x), fn) : 
+			saver(x) ; // everyone else can save dataURLs un-processed
+	}//end if dataURL passed?
+	
+	blob = x instanceof B ? 
+		x : 
+		new B([x], {type: m}) ;
+	
+	
+	function d2b(u) {
+		var p= u.split(/[:;,]/),
+		t= p[1],
+		dec= p[2] == "base64" ? atob : decodeURIComponent,
+		bin= dec(p.pop()),
+		mx= bin.length,
+		i= 0,
+		uia= new Uint8Array(mx);
+
+		for(i;i<mx;++i) uia[i]= bin.charCodeAt(i);
+
+		return new B([uia], {type: t});
+	 }
+	  
+	function saver(url, winMode){
+		
+		if ('download' in a) { //html5 A[download] 			
+			a.href = url;
+			a.setAttribute("download", fn);
+			a.innerHTML = "downloading...";
+			D.body.appendChild(a);
+			setTimeout(function() {
+				a.click();
+				D.body.removeChild(a);
+				if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(a.href);}, 250 );}
+			}, 66);
+			return true;
+		}
+
+		if(typeof safari !=="undefined" ){ // handle non-a[download] safari as best we can:
+			url="data:"+url.replace(/^data:([\w\/\-\+]+)/, u);
+			if(!window.open(url)){ // popup blocked, offer direct download: 
+				if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+			}
+			return true;
+		}
+		
+		//do iframe dataURL download (old ch+FF):
+		var f = D.createElement("iframe");
+		D.body.appendChild(f);
+		
+		if(!winMode){ // force a mime that will download:
+			url="data:"+url.replace(/^data:([\w\/\-\+]+)/, u);
+		}
+		f.src=url;
+		setTimeout(function(){ D.body.removeChild(f); }, 333);
+		
+	}//end saver 
+		
+
+
+
+	if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+		return navigator.msSaveBlob(blob, fn);
+	} 	
+	
+	if(self.URL){ // simple fast and modern way using Blob and URL:
+		saver(self.URL.createObjectURL(blob), true);
+	}else{
+		// handle non-Blob()+non-URL browsers:
+		if(typeof blob === "string" || blob.constructor===z ){
+			try{
+				return saver( "data:" +  m   + ";base64,"  +  self.btoa(blob)  ); 
+			}catch(y){
+				return saver( "data:" +  m   + "," + encodeURIComponent(blob)  ); 
+			}
+		}
+		
+		// Blob but not URL:
+		fr=new FileReader();
+		fr.onload=function(e){
+			saver(this.result); 
+		};
+		fr.readAsDataURL(blob);
+	}	
+	return true;
+} /* end download() */
+},{}],3:[function(require,module,exports){
 
 module.exports = function geocoder( geocoderInputID, map , featureOverlay){
     var marker;
@@ -62,7 +272,7 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
     });
     
 }
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var geocoder = require('./geocoder.js');
 var mapObj = require('./map.js');
 var mapEvents = require('./mapEvents.js');
@@ -79,7 +289,7 @@ $( document ).ready(function() {
 
 
 
-},{"./geocoder.js":1,"./map.js":3,"./mapEvents.js":4,"./ui.js":5}],3:[function(require,module,exports){
+},{"./geocoder.js":3,"./map.js":5,"./mapEvents.js":6,"./ui.js":8}],5:[function(require,module,exports){
 
 module.exports = function MapObj( mapID ){
     styles = {
@@ -174,6 +384,7 @@ module.exports = function MapObj( mapID ){
                 maxZoom: 16
             })
         });
+    this.map.addControl(new ol.control.ScaleLine());
 
     this.featureOverlay = new ol.FeatureOverlay({
         map: this.map,
@@ -193,7 +404,7 @@ module.exports = function MapObj( mapID ){
     });           
 }
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
 module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
     
@@ -248,10 +459,49 @@ module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
     
 }   
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
-module.exports = function initUI( map, vectorLayer, featureOverlay ){
- 
+module.exports = function(verb, url, data, target) {
+  var form = document.createElement("form");
+  form.action = url;
+  form.method = verb;
+  form.target = target || "_self";
+  if (data) {
+    for (var key in data) {
+      var input = document.createElement("textarea");
+      input.name = key;
+      input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
+      form.appendChild(input);
+    }
+  }
+  form.style.display = 'none';
+  document.body.appendChild(form);
+  form.submit();
+};
+},{}],8:[function(require,module,exports){
+
+var downloadEvent = require('./DownloadEvent.js');
+
+module.exports = function( map, vectorLayer, featureOverlay ){
+    var downloadDlg = $( "#downloadDlg" ).dialog({ 
+        autoOpen: false,
+        height:280,
+        modal: true,
+        buttons: {
+            "Download Data": function() {
+                downloadEvent( vectorLayer.getSource(), 'EPSG:31370' ); 
+                $( this ).dialog( "close" );
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+            }
+      }
+        
+    });
+    
+    $( "#saveBtn" ).button();
+    $( "#saveOpenBtn" ).button();
+    
     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
     .done( function(resp)  {
             var indexJson = resp.data.datasets;
@@ -270,93 +520,10 @@ module.exports = function initUI( map, vectorLayer, featureOverlay ){
             displayData(pageUrl + ".json");
             });
 
-    $( "#saveBtn" ).click(function(){
-        
-        var vecSrc = vectorLayer.getSource();
-        var outSRS= 'EPSG:31370';
-        
-        if( !(vecSrc && vecSrc.getFeatures().length) ){ return; }
-        
-        var lst = document.getElementById("dataList")
-        var laagName = lst.options[lst.selectedIndex].text;
-        
-        if( document.getElementById('geoJsonChk').checked ){
-            var gjsParser = new ol.format.GeoJSON();
-            var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});
-            downloadString( gjs, laagName +".json" , "text/plain");
-        }
-        else if( document.getElementById('gpxChk').checked ){
-            var ftype = vecSrc.getFeatures()[0].getGeometry().getType();
-            if(ftype == "MultiPolygon" || ftype == "Polygon"){
-                alert("GPX kan enkel lijnen en punten opslaan");
-            }
-            else {
-                var gmlParser = new ol.format.GPX();
-                var gml = gmlParser.writeFeatures( vecSrc.getFeatures(),
-                                        { dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
-                downloadString( gml, laagName +".gpx" , "text/plain");
-            }
-        }
-        else if( document.getElementById('shpChk').checked ){
-            var gjsParser = new ol.format.GeoJSON();
-            var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                        {dataProjection: outSRS, featureProjection:'EPSG:31370'} ));
-            
-            var arcjs =  Terraformer.ArcGIS.convert( gjs );
-            
-            var esriGeometry;
-            var ftype = gjs.features[0].geometry.type;
-            switch(ftype) {
-                case "Point":
-                    esriGeometry = "esriGeometryPoint";
-                    break;
-                case "LineString":
-                    esriGeometry = "esriGeometryPolyline";
-                    break;
-                case "MultiLineString":
-                    esriGeometry = "esriGeometryPolyline";
-                    break;
-                case "MultiPoint":
-                    esriGeometry = "esriGeometryMultipoint";
-                    break;
-                case "Polygon":
-                    esriGeometry = "esriGeometryPolygon";                
-                    break;          
-                case "MultiPolygon":
-                    esriGeometry = "esriGeometryPolygon";
-                    break;                
-                default:
-                esriGeometry = "esriGeometryNull";
-            }
-            var esriFields = [] ;
-            for( var key in gjs.features[0].properties ){ 
-                feat = gjs.features[0].properties[key];
-                if( typeof(feat) == "number" ){ 
-                    esriFields.push({name:key, type:"esriFieldTypeDouble" }) 
-                }
-                else {
-                    esriFields.push({name:key, type:"esriFieldTypeString", length: 254 }) 
-                }
-            }
-                    
-            for( var i= 0; i < arcjs.length; i++ ){
-                delete arcjs[i].geometry.spatialReference  //remove wrong prj
-            }
-            var arcjsFull = { 
-                spatialReference : {latestWkid: parseFloat(outSRS.replace("EPSG:","")) } ,
-                fields: esriFields,
-                geometryType: esriGeometry,
-                features: arcjs 
-            }
-                    
-            downloadString( JSON.stringify(arcjsFull), laagName +".json" , "text/plain");
-        }
+    $( "#saveOpenBtn" ).click(function(){
+         downloadDlg.dialog( "open" );   
     });
-
-    $( "#saveBtn" ).button({});
-    $( "#radio" ).buttonset();
-
+    
     /*event handlers*/        
     var vectorSource = new ol.source.Vector({projection: 'EPSG:31370'});
     vectorLayer.setSource(vectorSource); 
@@ -411,4 +578,4 @@ module.exports = function initUI( map, vectorLayer, featureOverlay ){
     }
       
 }
-},{}]},{},[2]);
+},{"./DownloadEvent.js":1}]},{},[4]);

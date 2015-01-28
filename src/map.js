@@ -92,6 +92,7 @@ module.exports = function MapObj( mapID ){
                 maxZoom: 16
             })
         });
+    this.map.addControl(new ol.control.ScaleLine());
 
     this.featureOverlay = new ol.FeatureOverlay({
         map: this.map,

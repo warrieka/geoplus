@@ -1,6 +1,26 @@
 
-module.exports = function initUI( map, vectorLayer, featureOverlay ){
- 
+var downloadEvent = require('./DownloadEvent.js');
+
+module.exports = function( map, vectorLayer, featureOverlay ){
+    var downloadDlg = $( "#downloadDlg" ).dialog({ 
+        autoOpen: false,
+        height:280,
+        modal: true,
+        buttons: {
+            "Download Data": function() {
+                downloadEvent( vectorLayer.getSource(), 'EPSG:31370' ); 
+                $( this ).dialog( "close" );
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+            }
+      }
+        
+    });
+    
+    $( "#saveBtn" ).button();
+    $( "#saveOpenBtn" ).button();
+    
     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
     .done( function(resp)  {
             var indexJson = resp.data.datasets;
@@ -19,93 +39,10 @@ module.exports = function initUI( map, vectorLayer, featureOverlay ){
             displayData(pageUrl + ".json");
             });
 
-    $( "#saveBtn" ).click(function(){
-        
-        var vecSrc = vectorLayer.getSource();
-        var outSRS= 'EPSG:31370';
-        
-        if( !(vecSrc && vecSrc.getFeatures().length) ){ return; }
-        
-        var lst = document.getElementById("dataList")
-        var laagName = lst.options[lst.selectedIndex].text;
-        
-        if( document.getElementById('geoJsonChk').checked ){
-            var gjsParser = new ol.format.GeoJSON();
-            var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});
-            downloadString( gjs, laagName +".json" , "text/plain");
-        }
-        else if( document.getElementById('gpxChk').checked ){
-            var ftype = vecSrc.getFeatures()[0].getGeometry().getType();
-            if(ftype == "MultiPolygon" || ftype == "Polygon"){
-                alert("GPX kan enkel lijnen en punten opslaan");
-            }
-            else {
-                var gmlParser = new ol.format.GPX();
-                var gml = gmlParser.writeFeatures( vecSrc.getFeatures(),
-                                        { dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
-                downloadString( gml, laagName +".gpx" , "text/plain");
-            }
-        }
-        else if( document.getElementById('shpChk').checked ){
-            var gjsParser = new ol.format.GeoJSON();
-            var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                        {dataProjection: outSRS, featureProjection:'EPSG:31370'} ));
-            
-            var arcjs =  Terraformer.ArcGIS.convert( gjs );
-            
-            var esriGeometry;
-            var ftype = gjs.features[0].geometry.type;
-            switch(ftype) {
-                case "Point":
-                    esriGeometry = "esriGeometryPoint";
-                    break;
-                case "LineString":
-                    esriGeometry = "esriGeometryPolyline";
-                    break;
-                case "MultiLineString":
-                    esriGeometry = "esriGeometryPolyline";
-                    break;
-                case "MultiPoint":
-                    esriGeometry = "esriGeometryMultipoint";
-                    break;
-                case "Polygon":
-                    esriGeometry = "esriGeometryPolygon";                
-                    break;          
-                case "MultiPolygon":
-                    esriGeometry = "esriGeometryPolygon";
-                    break;                
-                default:
-                esriGeometry = "esriGeometryNull";
-            }
-            var esriFields = [] ;
-            for( var key in gjs.features[0].properties ){ 
-                feat = gjs.features[0].properties[key];
-                if( typeof(feat) == "number" ){ 
-                    esriFields.push({name:key, type:"esriFieldTypeDouble" }) 
-                }
-                else {
-                    esriFields.push({name:key, type:"esriFieldTypeString", length: 254 }) 
-                }
-            }
-                    
-            for( var i= 0; i < arcjs.length; i++ ){
-                delete arcjs[i].geometry.spatialReference  //remove wrong prj
-            }
-            var arcjsFull = { 
-                spatialReference : {latestWkid: parseFloat(outSRS.replace("EPSG:","")) } ,
-                fields: esriFields,
-                geometryType: esriGeometry,
-                features: arcjs 
-            }
-                    
-            downloadString( JSON.stringify(arcjsFull), laagName +".json" , "text/plain");
-        }
+    $( "#saveOpenBtn" ).click(function(){
+         downloadDlg.dialog( "open" );   
     });
-
-    $( "#saveBtn" ).button({});
-    $( "#radio" ).buttonset();
-
+    
     /*event handlers*/        
     var vectorSource = new ol.source.Vector({projection: 'EPSG:31370'});
     vectorLayer.setSource(vectorSource); 
