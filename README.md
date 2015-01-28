@@ -32,7 +32,8 @@ De json wordt geparseerd en in een openlayers vectorlaag geladen.
 
 De gebruiker kan de voledige laag bekijken en bevragen. 
 Indien ze de laag geschikt vindt haar doelstelling, kan de gebruiker deze downloaden in een gewenst formaat en CRS.
-Op dit moment wordt goejson - gpx en esri json onsteund als output formaten.  
+Op dit moment wordt geojson - gpx en esri json onsteund als output formaten in de browser.  
+Shapefile wordt ondersteund op basis van een externe service.
 
 ###Andere kaart elementen 
 
