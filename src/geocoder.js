@@ -19,7 +19,10 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
                     straten.push( straat );
                 }
             });
-        
+        //filter dubplicates
+        straten = straten.filter(function(elem, pos) {
+            return straten.indexOf(elem) == pos;
+        });
         response( straten );
         }
       });
@@ -55,7 +58,10 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
                             loc.BoundingBox.UpperRight.X_Lambert72,
                             loc.BoundingBox.UpperRight.Y_Lambert72],  map.getSize()) 
             }
-          }
+          },
+         complete: function(data) {
+             $('#adres').val(''); //clear input when finished
+         }
         })
       },
     });

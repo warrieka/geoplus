@@ -1,21 +1,22 @@
-
-var downloadEvent = require('./DownloadEvent.js');
+    
+var od2olParser = require('./od2ol3parser.js')
+var downloadEvent = require('./downloadEvent.js');
 
 module.exports = function( map, vectorLayer, featureOverlay ){
     var downloadDlg = $( "#downloadDlg" ).dialog({ 
         autoOpen: false,
-        height:280,
+        height:340,
+        width: 400,
         modal: true,
         buttons: {
             "Download Data": function() {
-                downloadEvent( vectorLayer.getSource(), 'EPSG:31370' ); 
+                downloadEvent( vectorLayer.getSource() ); 
                 $( this ).dialog( "close" );
             },
             "Cancel": function() {
                 $( this ).dialog( "close" );
             }
-      }
-        
+      }        
     });
     
     $( "#saveBtn" ).button();
@@ -62,38 +63,6 @@ module.exports = function( map, vectorLayer, featureOverlay ){
             }
         });     
     }
-    
-    var od2olParser = function(data){
-        var gjsParser = new ol.format.GeoJSON();
-        var features =  [];
-        for ( var i = 0; i < data.length; ++i ){
-            var item = data[i];
-            var geometry;
-            if( item.point_lat && item.point_lng ) {
-                var coords = ol.proj.transform(
-                        [parseFloat(item.point_lng), parseFloat(item.point_lat)],'EPSG:4326','EPSG:31370')
-                geometry= new ol.geom.Point( coords );
-                delete item.point_lng;
-                delete item.point_lat;
-                }
-            else if( item.geometry ) {
-                try{
-                geometry = gjsParser.readGeometry( item.geometry, {
-                                    featureProjection:'EPSG:31370', dataProjection:'EPSG:4326'});            
-                }
-                catch(ero) {
-                    console.log("Kon geometry op record "+ item.id + " niet parseren" )
-                }
-                delete item.geometry;
-            }
-            else { 
-                throw 'Niet alle records geografisch'; 
-            }
-            item.geometry = geometry ;
-            var feature = new ol.Feature(item);
-            features.push( feature );
-        }
-        return features;
-    }
+
       
 }

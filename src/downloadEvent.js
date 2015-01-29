@@ -1,12 +1,15 @@
 var download = require('./download.js');
 var openPost = require('./openPost.js');
 
-module.exports = function(vecSrc, outSRS){
+module.exports = function(vecSrc){
         
         if( !(vecSrc && vecSrc.getFeatures().length) ){ return; }
         
-        var lst = document.getElementById("dataList")
+        var lst = document.getElementById("dataList");
         var laagName = lst.options[lst.selectedIndex].text;
+        
+        var crslst = document.getElementById("crsList");
+        var outSRS = crslst.options[crslst.selectedIndex].value;
         
         if( document.getElementById('geoJsonChk').checked ){
             var gjsParser = new ol.format.GeoJSON();
@@ -17,8 +20,8 @@ module.exports = function(vecSrc, outSRS){
         else if( document.getElementById('shpChk').checked ){
             var gjsParser = new ol.format.GeoJSON();
             var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                  {dataProjection: outSRS, featureProjection:'EPSG:31370'});       
-            openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: gjs, outputName: laagName }, "_blank")
+                                  {dataProjection: 'EPSG:4326', featureProjection:'EPSG:31370'});       
+            openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: gjs, outputName: laagName +".zip"}, "_blank")
         }
         else if( document.getElementById('gpxChk').checked ){
             var ftype = vecSrc.getFeatures()[0].getGeometry().getType();
@@ -29,7 +32,7 @@ module.exports = function(vecSrc, outSRS){
                 var gpxParser = new ol.format.GPX();
                 var gpx = gpxParser.writeFeatures( vecSrc.getFeatures(),
                                         { dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
-                download( gml, laagName +".gpx" , "text/plain");
+                download( gpx, laagName +".gpx" , "text/plain");
             }
         }
         else if( document.getElementById('esriJSChk').checked ){
@@ -65,6 +68,8 @@ module.exports = function(vecSrc, outSRS){
             }
             var esriFields = [] ;
             for( var key in gjs.features[0].properties ){ 
+                if ( key.toLowerCase() == "objectid") { continue; }
+                
                 feat = gjs.features[0].properties[key];
                 if( typeof(feat) == "number" ){ 
                     esriFields.push({name:key, type:"esriFieldTypeDouble" }) 

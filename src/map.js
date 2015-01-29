@@ -1,6 +1,6 @@
 
 module.exports = function MapObj( mapID ){
-    styles = {
+    var styles = {
         'Point': [new ol.style.Style({
             image: new ol.style.Circle({
                         radius: 5, 
@@ -68,21 +68,24 @@ module.exports = function MapObj( mapID ){
     this.basiskaart = new ol.layer.Tile({
         extent: projectionExtent,
         source: new ol.source.WMTS({
-        url: 'http://grb.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts/',
-        layer: 'grb_bsk_gr',
-        matrixSet: 'BPL72VL',
-        format: 'image/png',
-        projection: projection,
-        tileGrid: new ol.tilegrid.WMTS({
-            origin: ol.extent.getTopLeft(projectionExtent),
-            resolutions: resolutions,
-            matrixIds: matrixIds
+          attributions: [new ol.Attribution({ html: 
+                   'Door <a href="mailto:kaywarrie@gmail.com">Kay Warie</a>, Basiskaart door: <a href="http://www.agiv.be/" target="_blank">AGIV</a>' }) ],
+          url: 'http://grb.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts/',
+          layer: 'grb_bsk_gr',
+          matrixSet: 'BPL72VL',
+          format: 'image/png',
+          projection: projection,
+          tileGrid: new ol.tilegrid.WMTS({
+               origin: ol.extent.getTopLeft(projectionExtent),
+               resolutions: resolutions,
+               matrixIds: matrixIds
             })
         })
     }); 
 
     this.map = new ol.Map({
             target: mapID,
+//             logo: null,
             layers: [ this.basiskaart, this.vectorLayer  ],
             view: new ol.View({
                 projection: 'EPSG:31370',

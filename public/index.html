@@ -13,7 +13,7 @@
         <script src="src/terraformer.min.js" type="text/javascript"></script> 
         <script src="src/terraformer-arcgis-parser-1.0.4.min.js" type="text/javascript"></script> 
     <style>
-        .listBox { width: 200px; }
+        #dataList { width: 200px; }
         .dlg {font-size: 11px;}
         body {margin:0;padding:0;}
         #adres { position: absolute; right: 10px; top: 50px; z-index:100000}
@@ -26,6 +26,7 @@
   <body>
 
        <div id="toolbar" class="ui-widget-header ui-corner-all">
+              <img height=20 alt="Geo+"  src="images/logo.png" />
               <label for="dataList">Laag: </label>            
               <select class="listBox" id="dataList" > 
                 <option></option>
@@ -33,7 +34,7 @@
               <button id="saveOpenBtn" type="button">Opslaan</button>
        </div>         
        
-      <input id="adres"/>  
+      <input id="adres" placeholder="Straat Huisnummer" />  
       <div id="map" ></div>
       <div id="info" class="dlg" ><div/>
       
@@ -43,7 +44,15 @@
                 <input type="radio" id="geoJsonChk" name="radio" checked><label for="geoJsonChk">GeoJSON</label><br/>
                 <input type="radio" id="gpxChk" name="radio" ><label for="gpxChk">GPX</label><br/>
                 <input type="radio" id="esriJSChk" name="radio"><label for="esriJSChk">ESRI JSON</label><br/>
-                <input type="radio" id="shpChk" name="radio"><label for="shpChk">ESRI Shapefile</label><br/>
+                <input type="radio" id="shpChk" name="radio"><label for="shpChk">ESRI Shapefile (onstabiel)</label><br/>
+            </div><br/>
+            <div>Coördinaatsysteem:</div>
+            <div style="padding-left:2em">
+             <select class="listBox" id="crsList" > 
+                <option value="EPSG:31370" >Belgisch Lambert 1972</option>
+                <option value="EPSG:4326" >Geografisch (WGS 1984)</option>
+                <option value="EPSG:3857" >Web mercator (google)</option>
+              </select> 
             </div>
       </div>
   </div>
