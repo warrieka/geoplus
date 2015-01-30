@@ -1,5 +1,6 @@
 var download = require('./download.js');
 var openPost = require('./openPost.js');
+var ArcGIS = require('terraformer-arcgis-parser')
 
 module.exports = function(vecSrc){
         
@@ -40,7 +41,7 @@ module.exports = function(vecSrc){
             var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
                                         {dataProjection: outSRS, featureProjection:'EPSG:31370'} ));
             
-            var arcjs =  Terraformer.ArcGIS.convert( gjs );
+            var arcjs =  ArcGIS.convert( gjs );
             
             var esriGeometry;
             var ftype = gjs.features[0].geometry.type;
@@ -83,8 +84,13 @@ module.exports = function(vecSrc){
                 delete arcjs[i].geometry.spatialReference  //remove wrong prj
                 delete arcjs[i].attributes.objectid  //can't have 2 objectID 's
             }
+            latestWkid = parseInt(outSRS.replace("EPSG:",""));
+            wkid = latestWkid;
+            if( latestWkid = 3857 ){  wkid = 102100 }
+            
             var arcjsFull = { 
-                spatialReference : {latestWkid: parseInt(outSRS.replace("EPSG:","")) } ,
+                spatialReference : { wkid: wkid,
+                                     latestWkid: latestWkid } ,
                 fields: esriFields,
                 geometryType: esriGeometry,
                 features: arcjs 

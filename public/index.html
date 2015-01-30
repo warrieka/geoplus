@@ -2,36 +2,35 @@
   <head>
     <title>Geoplus</title>
     <meta charset="utf-8">
+    <!--[if IE]>
+    <script type="text/javascript">
+     //redirect if old IE
+      window.location = "http://warrieka.github.io/geoplus/notsupported.html";
+    </script>
+    <![endif]-->
+        <!--external depedency stuff-->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/ui-lightness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-    <!--external depedency stuff-->
-        <link rel="stylesheet" href="css/ol.css" type="text/css">
-        <script src="src/ol-debug.js" type="text/javascript"></script>
-        <script src="src/proj4.js" type="text/javascript"></script>
-        <script src="http://epsg.io/31370.js" type="text/javascript"></script>
-        <script src="src/terraformer.min.js" type="text/javascript"></script> 
-        <script src="src/terraformer-arcgis-parser-1.0.4.min.js" type="text/javascript"></script> 
-    <style>
-        #dataList { width: 200px; }
-        .dlg {font-size: 11px;}
-        body {margin:0;padding:0;}
-        #adres { position: absolute; right: 10px; top: 50px; z-index:100000}
-        #map { position: absolute;top:40;bottom:0;right:0;left:0;  
-               background-color: #b0c4de;} 
-    </style>
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+    <script src="src/ol-debug.js" type="text/javascript"></script>
+    <script src="src/proj4.js" type="text/javascript"></script>
     <!--My stuff-->
+        <link rel="stylesheet" href="css/geoplus.css">
         <script src="src/geoplus.js" type="text/javascript"></script>
   </head>
   <body>
+<a href="https://github.com/warrieka/geoplus" target="_blank">
+<img style="height:100px ;position: absolute; top: 0; right: 0; border: 0; z-index:999999" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 
        <div id="toolbar" class="ui-widget-header ui-corner-all">
               <img height=20 alt="Geo+"  src="images/logo.png" />
               <label for="dataList">Laag: </label>            
-              <select class="listBox" id="dataList" > 
+              <select class="listBox" id="dataList" title="Selecteer een laag"> 
                 <option></option>
-              </select>       
-              <button id="saveOpenBtn" type="button">Opslaan</button>
+              </select> 
+              <button id="infoBtn" type="button" title="Meer info over de laag" >Info</button>
+              <button id="saveOpenBtn" type="button" title="Sla de laag op naar een GIS-bestand" >Opslaan</button>
        </div>         
        
       <input id="adres" placeholder="Straat Huisnummer" />  
@@ -52,9 +51,11 @@
                 <option value="EPSG:31370" >Belgisch Lambert 1972</option>
                 <option value="EPSG:4326" >Geografisch (WGS 1984)</option>
                 <option value="EPSG:3857" >Web mercator (google)</option>
+                <option value="EPSG:3812" >Belgisch Lambert 2008</option>
+                <option value="EPSG:32631" >UTM31N-WGS84</option>
               </select> 
             </div>
       </div>
-  </div>
+      
   </body>
 </html>

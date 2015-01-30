@@ -1,0 +1,7 @@
+
+#dataList { width: 200px; }
+.dlg {font-size: 11px;}
+body {margin:0;padding:0;}
+#adres { position: absolute; right: 10px; top: 70px; z-index:100000}
+#map { position: absolute;top:39;bottom:0;right:0;left:0;  
+        background-color: #b0c4de;} 
