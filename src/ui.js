@@ -44,16 +44,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
       
-     $( "#infoBtn" ).click(function(){
-         var lst = document.getElementById("dataList");
-         var laagName = lst.options[lst.selectedIndex].text;
-         if( laagName == "" ){return;}
-         var laagInfo = $(lst.options[lst.selectedIndex]).attr( "data-info" );
-         var laagUrl =  $(lst.options[lst.selectedIndex]).attr( "data-url" );
-         var msg = "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
-         dlg.html(msg);
-         dlg.dialog( "option", "title", laagName).dialog( "open" );   
-    });
+     $( "#infoBtn" ).click(showlayerInfo);
     
 //     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
 //     .done( function(resp)  {
@@ -86,6 +77,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
     vectorLayer.setSource(vectorSource); 
     
     var displayData = function( url ) { 
+        showlayerInfo();
         vectorSource.clear(1)
         $.ajax({ url: url, dataType: 'json'}).done(function(resp) {
             var pages = resp.paging.pages 
@@ -101,5 +93,14 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         });     
     }
 
-      
+    var showlayerInfo = function(){
+         var lst = document.getElementById("dataList");
+         var laagName = lst.options[lst.selectedIndex].text;
+         if( laagName == "" ){return;}
+         var laagInfo = $(lst.options[lst.selectedIndex]).attr( "data-info" );
+         var laagUrl =  $(lst.options[lst.selectedIndex]).attr( "data-url" );
+         var msg = "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
+         dlg.html(msg);
+         dlg.dialog( "option", "title", laagName).dialog( "open" );   
+    }      
 }

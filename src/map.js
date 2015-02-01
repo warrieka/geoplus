@@ -53,6 +53,18 @@ module.exports = function MapObj( mapID ){
     
     this.vectorLayer = new ol.layer.Vector({style: this.styleFunction}) ;   
     
+    var geolocation = new ol.Geolocation({
+        projection: 'EPSG:31370',
+        tracking: true
+    });
+    
+    var positionPt = new ol.Feature();
+
+    geolocation.on('change', function(evt) {
+             var pt = new ol.geom.Point(geolocation.getPosition());
+             positionPt.setGeometry( pt );           
+        });
+        
     /*basiskaart*/ 
     var projectionExtent = [9928.00, 66928.00, 272072.00, 329072.00];
     var projection = ol.proj.get('EPSG:31370');
@@ -85,8 +97,7 @@ module.exports = function MapObj( mapID ){
 
     this.map = new ol.Map({
             target: mapID,
-//             logo: null,
-            layers: [ this.basiskaart, this.vectorLayer  ],
+            layers: [ this.basiskaart, this.vectorLayer],
             view: new ol.View({
                 projection: 'EPSG:31370',
                 center: [152223, 213544],
@@ -98,6 +109,7 @@ module.exports = function MapObj( mapID ){
     this.map.addControl(new ol.control.ScaleLine());
 
     this.featureOverlay = new ol.FeatureOverlay({
+        features: [positionPt],
         map: this.map,
         style:  new ol.style.Style({
             image: new ol.style.Circle({
@@ -112,5 +124,7 @@ module.exports = function MapObj( mapID ){
                     color: 'rgba(255,0,0,0.1)'
                 }),
             })       
-    });           
+    });  
+    
+            
 }

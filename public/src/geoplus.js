@@ -2122,6 +2122,18 @@ module.exports = function MapObj( mapID ){
     
     this.vectorLayer = new ol.layer.Vector({style: this.styleFunction}) ;   
     
+    var geolocation = new ol.Geolocation({
+        projection: 'EPSG:31370',
+        tracking: true
+    });
+    
+    var positionPt = new ol.Feature();
+
+    geolocation.on('change', function(evt) {
+             var pt = new ol.geom.Point(geolocation.getPosition());
+             positionPt.setGeometry( pt );           
+        });
+        
     /*basiskaart*/ 
     var projectionExtent = [9928.00, 66928.00, 272072.00, 329072.00];
     var projection = ol.proj.get('EPSG:31370');
@@ -2154,8 +2166,7 @@ module.exports = function MapObj( mapID ){
 
     this.map = new ol.Map({
             target: mapID,
-//             logo: null,
-            layers: [ this.basiskaart, this.vectorLayer  ],
+            layers: [ this.basiskaart, this.vectorLayer],
             view: new ol.View({
                 projection: 'EPSG:31370',
                 center: [152223, 213544],
@@ -2167,6 +2178,7 @@ module.exports = function MapObj( mapID ){
     this.map.addControl(new ol.control.ScaleLine());
 
     this.featureOverlay = new ol.FeatureOverlay({
+        features: [positionPt],
         map: this.map,
         style:  new ol.style.Style({
             image: new ol.style.Circle({
@@ -2181,7 +2193,9 @@ module.exports = function MapObj( mapID ){
                     color: 'rgba(255,0,0,0.1)'
                 }),
             })       
-    });           
+    });  
+    
+            
 }
 
 },{}],8:[function(require,module,exports){
@@ -2339,16 +2353,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
       
-     $( "#infoBtn" ).click(function(){
-         var lst = document.getElementById("dataList");
-         var laagName = lst.options[lst.selectedIndex].text;
-         if( laagName == "" ){return;}
-         var laagInfo = $(lst.options[lst.selectedIndex]).attr( "data-info" );
-         var laagUrl =  $(lst.options[lst.selectedIndex]).attr( "data-url" );
-         var msg = "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
-         dlg.html(msg);
-         dlg.dialog( "option", "title", laagName).dialog( "open" );   
-    });
+     $( "#infoBtn" ).click(showlayerInfo);
     
 //     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
 //     .done( function(resp)  {
@@ -2381,6 +2386,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
     vectorLayer.setSource(vectorSource); 
     
     var displayData = function( url ) { 
+        showlayerInfo();
         vectorSource.clear(1)
         $.ajax({ url: url, dataType: 'json'}).done(function(resp) {
             var pages = resp.paging.pages 
@@ -2396,6 +2402,15 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         });     
     }
 
-      
+    var showlayerInfo = function(){
+         var lst = document.getElementById("dataList");
+         var laagName = lst.options[lst.selectedIndex].text;
+         if( laagName == "" ){return;}
+         var laagInfo = $(lst.options[lst.selectedIndex]).attr( "data-info" );
+         var laagUrl =  $(lst.options[lst.selectedIndex]).attr( "data-url" );
+         var msg = "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
+         dlg.html(msg);
+         dlg.dialog( "option", "title", laagName).dialog( "open" );   
+    }      
 }
 },{"./downloadEvent.js":4,"./od2ol3parser.js":9}]},{},[6]);
