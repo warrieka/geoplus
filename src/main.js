@@ -12,7 +12,7 @@ $( document ).ready(function() {
         
     var kaart = new mapObj('map');
     var kaartEvent = new mapEvents( kaart.map, kaart.vectorLayer, kaart.featureOverlay);
-    var ui = new initUI( kaart.map , kaart.vectorLayer , kaart.featureOverlay);
+    var ui = new initUI( kaart );
     var adresFinder = new geocoder( 'adres', kaart.map , kaart.featureOverlay );
     
 });

@@ -1779,8 +1779,6 @@ module.exports = function (data, strFileName, strMimeType) {
 		m=x[0];
 		x=x[1]; 
 	}
-	
-	
 
 
 	//go ahead and download dataURLs right away
@@ -2059,7 +2057,7 @@ $( document ).ready(function() {
         
     var kaart = new mapObj('map');
     var kaartEvent = new mapEvents( kaart.map, kaart.vectorLayer, kaart.featureOverlay);
-    var ui = new initUI( kaart.map , kaart.vectorLayer , kaart.featureOverlay);
+    var ui = new initUI( kaart );
     var adresFinder = new geocoder( 'adres', kaart.map , kaart.featureOverlay );
     
 });
@@ -2131,9 +2129,9 @@ module.exports = function MapObj( mapID ){
 
     geolocation.on('change', function(evt) {
              var pt = new ol.geom.Point(geolocation.getPosition());
-             positionPt.setGeometry( pt );           
+             positionPt.setGeometry( pt );   
         });
-        
+      
     /*basiskaart*/ 
     var projectionExtent = [9928.00, 66928.00, 272072.00, 329072.00];
     var projection = ol.proj.get('EPSG:31370');
@@ -2145,6 +2143,25 @@ module.exports = function MapObj( mapID ){
         resolutions[z] = size / Math.pow(2, z);
         matrixIds[z] = z;
     }
+
+   this.lufo = new ol.layer.Tile({
+        extent: projectionExtent,
+        visible: false,
+        source: new ol.source.WMTS({
+          attributions: [new ol.Attribution({ html: 
+                   'Door <a href="mailto:kaywarrie@gmail.com">Kay Warie</a>, Basiskaart door: <a href="http://www.agiv.be/" target="_blank">AGIV</a>' }) ],
+          url: 'http://grb.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts/',
+          layer: 'orthoklm',
+          matrixSet: 'BPL72VL',
+          format: 'image/png',
+          projection: projection,
+          tileGrid: new ol.tilegrid.WMTS({
+               origin: ol.extent.getTopLeft(projectionExtent),
+               resolutions: resolutions,
+               matrixIds: matrixIds
+            })
+        })
+    }); 
 
     this.basiskaart = new ol.layer.Tile({
         extent: projectionExtent,
@@ -2166,7 +2183,7 @@ module.exports = function MapObj( mapID ){
 
     this.map = new ol.Map({
             target: mapID,
-            layers: [ this.basiskaart, this.vectorLayer],
+            layers: [ this.basiskaart, this.lufo, this.vectorLayer],
             view: new ol.View({
                 projection: 'EPSG:31370',
                 center: [152223, 213544],
@@ -2176,7 +2193,7 @@ module.exports = function MapObj( mapID ){
             })
         });
     this.map.addControl(new ol.control.ScaleLine());
-
+    
     this.featureOverlay = new ol.FeatureOverlay({
         features: [positionPt],
         map: this.map,
@@ -2311,7 +2328,10 @@ module.exports = function(verb, url, data, target) {
 var od2olParser = require('./od2ol3parser.js')
 var downloadEvent = require('./downloadEvent.js');
 
-module.exports = function( map, vectorLayer, featureOverlay ){
+module.exports = function( kaart ){
+    var vectorLayer = kaart.vectorLayer;
+    var featureOverlay = kaart.featureOverlay; 
+    
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     
     var downloadDlg = $( "#downloadDlg" ).dialog({ 
@@ -2333,6 +2353,11 @@ module.exports = function( map, vectorLayer, featureOverlay ){
     $( "#saveBtn" ).button();
     $( "#saveOpenBtn" ).button();
     $( "#infoBtn" ).button();
+    $("#basemapSwitch").buttonset();        
+//     var basiskaartBtn = new ol.dom.Input(document.getElementById('grb'));
+//     basiskaartBtn.bindTo('checked', map.basiskaart, 'visible');
+//     var lufoBtn = new ol.dom.Input(document.getElementById('lufo'));
+//     lufoBtn.bindTo('checked', map.lufo, 'visible');
     
     $.ajax({ url: "index.json" })
     .done( function(resp)  {
@@ -2353,7 +2378,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
       
-     $( "#infoBtn" ).click(showlayerInfo);
+     $( "#infoBtn" ).click( function(){ showlayerInfo() });
     
 //     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
 //     .done( function(resp)  {
@@ -2365,9 +2390,6 @@ module.exports = function( map, vectorLayer, featureOverlay ){
 //                                 .attr("value", elem).text(title));                                
 //             })         
 //         })
-//     .fail( function(ero) {
-//         console.log(ero);
-//         alert("Sorry. Server gaf fout, de lagen werden niet geladen.")});
     
     $('#dataList').change(function() {
             var pageUrl =  this.options[this.selectedIndex].value;
@@ -2379,6 +2401,15 @@ module.exports = function( map, vectorLayer, featureOverlay ){
             alert("Er is geen data om te downloaden")
             return; } 
          downloadDlg.dialog( "open" );   
+    });
+    
+    $("#lufo").click( function(){
+            kaart.lufo.setVisible( this.checked );
+            kaart.basiskaart.setVisible( !this.checked );
+    });
+    $("#basiskaart").click( function(){
+            kaart.basiskaart.setVisible( this.checked );
+            kaart.lufo.setVisible( !this.checked );
     });
     
     /*event handlers*/        

@@ -23,8 +23,6 @@ module.exports = function (data, strFileName, strMimeType) {
 		m=x[0];
 		x=x[1]; 
 	}
-	
-	
 
 
 	//go ahead and download dataURLs right away

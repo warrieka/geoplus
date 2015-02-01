@@ -2,7 +2,10 @@
 var od2olParser = require('./od2ol3parser.js')
 var downloadEvent = require('./downloadEvent.js');
 
-module.exports = function( map, vectorLayer, featureOverlay ){
+module.exports = function( kaart ){
+    var vectorLayer = kaart.vectorLayer;
+    var featureOverlay = kaart.featureOverlay; 
+    
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     
     var downloadDlg = $( "#downloadDlg" ).dialog({ 
@@ -24,6 +27,11 @@ module.exports = function( map, vectorLayer, featureOverlay ){
     $( "#saveBtn" ).button();
     $( "#saveOpenBtn" ).button();
     $( "#infoBtn" ).button();
+    $("#basemapSwitch").buttonset();        
+//     var basiskaartBtn = new ol.dom.Input(document.getElementById('grb'));
+//     basiskaartBtn.bindTo('checked', map.basiskaart, 'visible');
+//     var lufoBtn = new ol.dom.Input(document.getElementById('lufo'));
+//     lufoBtn.bindTo('checked', map.lufo, 'visible');
     
     $.ajax({ url: "index.json" })
     .done( function(resp)  {
@@ -44,7 +52,7 @@ module.exports = function( map, vectorLayer, featureOverlay ){
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
       
-     $( "#infoBtn" ).click(showlayerInfo);
+     $( "#infoBtn" ).click( function(){ showlayerInfo() });
     
 //     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
 //     .done( function(resp)  {
@@ -56,9 +64,6 @@ module.exports = function( map, vectorLayer, featureOverlay ){
 //                                 .attr("value", elem).text(title));                                
 //             })         
 //         })
-//     .fail( function(ero) {
-//         console.log(ero);
-//         alert("Sorry. Server gaf fout, de lagen werden niet geladen.")});
     
     $('#dataList').change(function() {
             var pageUrl =  this.options[this.selectedIndex].value;
@@ -70,6 +75,15 @@ module.exports = function( map, vectorLayer, featureOverlay ){
             alert("Er is geen data om te downloaden")
             return; } 
          downloadDlg.dialog( "open" );   
+    });
+    
+    $("#lufo").click( function(){
+            kaart.lufo.setVisible( this.checked );
+            kaart.basiskaart.setVisible( !this.checked );
+    });
+    $("#basiskaart").click( function(){
+            kaart.basiskaart.setVisible( this.checked );
+            kaart.lufo.setVisible( !this.checked );
     });
     
     /*event handlers*/        
