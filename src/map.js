@@ -81,10 +81,11 @@ module.exports = function MapObj( mapID ){
         extent: projectionExtent,
         visible: false,
         source: new ol.source.WMTS({
-          attributions: [new ol.Attribution({ html: 
+          attributions: [new ol.Attribution({ html:
                    'Door <a href="mailto:kaywarrie@gmail.com">Kay Warie</a>, Basiskaart door: <a href="http://www.agiv.be/" target="_blank">AGIV</a>' }) ],
-          url: 'http://grb.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts/',
-          layer: 'orthoklm',
+          url: 'http://tile.informatievlaanderen.be/ws/raadpleegdiensten/wmts/',
+          layer: 'omwrgbmrvl',
+          style: '',
           matrixSet: 'BPL72VL',
           format: 'image/png',
           projection: projection,
@@ -94,16 +95,17 @@ module.exports = function MapObj( mapID ){
                matrixIds: matrixIds
             })
         })
-    }); 
+    });
 
     this.basiskaart = new ol.layer.Tile({
         extent: projectionExtent,
         source: new ol.source.WMTS({
           attributions: [new ol.Attribution({ html: 
                    'Door <a href="mailto:kaywarrie@gmail.com">Kay Warie</a>, Basiskaart door: <a href="http://www.agiv.be/" target="_blank">AGIV</a>' }) ],
-          url: 'http://grb.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts/',
-          layer: 'grb_bsk_gr',
+          url: 'http://tile.informatievlaanderen.be/ws/raadpleegdiensten/wmts/',
+          layer: 'grb_bsk_grijs',
           matrixSet: 'BPL72VL',
+          style: '',
           format: 'image/png',
           projection: projection,
           tileGrid: new ol.tilegrid.WMTS({

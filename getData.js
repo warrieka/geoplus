@@ -1,8 +1,9 @@
 var cheerio = require('cheerio');
 var request = require("request");
+var sync = require('sync-request');
 var fs = require('fs');
 var baseUri= "http://opendata.antwerpen.be";
-var maxCount = 30;
+var maxCount = 33;
 var urls = [];
 var requestCounter = 0;
 
@@ -12,9 +13,19 @@ var getPage = function(page) {
         var $ = cheerio.load(body);  
         $('li.library-item').each(function(iter, elem) 
           {              
-             title = $(elem).find('a').html();
-             url = baseUri + $(elem).find('a').attr('href') ; 
-             urls.push({title: title, url: url })            
+             var title = $(elem).find('a').html();
+             var url = baseUri + $(elem).find('a').attr('href');
+             var info =  $(elem).find('p').html();
+
+             var res = sync('GET', url, {});
+             var $$ = cheerio.load(res.getBody('utf8'));
+              $$('li.datatank-source').each(function(iter, i) {
+                   var ds = $$(i).find('a.kml').attr('href');
+                   if( ds != null && ds.indexOf( "/v4/" ) > -1){
+                      urls.push({title: title, info: info, url: url, ds: ds.replace(".kml", "") })
+                   }
+               });
+
           })
           requestCounter--;
           if( requestCounter == 0 ){
@@ -25,7 +36,7 @@ var getPage = function(page) {
   });  
 }
 
-for(i=0; i <= maxCount ; i++ ){ 
-  requestCounter++;  
+for(i=0; i <= maxCount ; i++ ){
+  requestCounter++;
   getPage(i);
 }

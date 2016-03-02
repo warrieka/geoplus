@@ -52,18 +52,7 @@ module.exports = function( kaart ){
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
       
-     $( "#infoBtn" ).click( function(){ showlayerInfo() });
-    
-//     $.ajax({ url: "http://datasets.antwerpen.be/v4/gis.json" })
-//     .done( function(resp)  {
-//             var indexJson = resp.data.datasets;             
-//             $.each(indexJson , function(i, elem)
-//             {
-//                 var title = elem.split("/").slice(-1)[0];              
-//                 $( "#dataList" ).append($("<option></option>")
-//                                 .attr("value", elem).text(title));                                
-//             })         
-//         })
+    $( "#infoBtn" ).click( function(){ showlayerInfo() });
     
     $('#dataList').change(function() {
             var pageUrl =  this.options[this.selectedIndex].value;
