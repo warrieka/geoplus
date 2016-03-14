@@ -2060,19 +2060,20 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
             var loc = locs[0];
             var coordinates = [loc.Location.X_Lambert72, loc.Location.Y_Lambert72];
             
-            if(marker){ featureOverlay.removeFeature(marker); }
-            marker = new ol.Feature({
-                geometry: new ol.geom.Point(coordinates), 
-                name: loc.FormattedAddress
+            if(marker){
+					featureOverlay.remove(marker); 
+				}
+			marker = new ol.Feature({
+					geometry: new ol.geom.Point(coordinates), 
+					name: loc.FormattedAddress
                 });
-
-            featureOverlay.addFeature(marker);       
+            featureOverlay.push(marker);       
             
             var view= map.getView();
-            view.fitExtent([loc.BoundingBox.LowerLeft.X_Lambert72, 
-                            loc.BoundingBox.LowerLeft.Y_Lambert72, 
-                            loc.BoundingBox.UpperRight.X_Lambert72,
-                            loc.BoundingBox.UpperRight.Y_Lambert72],  map.getSize()) 
+            view.fit([loc.BoundingBox.LowerLeft.X_Lambert72, 
+                        loc.BoundingBox.LowerLeft.Y_Lambert72, 
+                        loc.BoundingBox.UpperRight.X_Lambert72,
+                        loc.BoundingBox.UpperRight.Y_Lambert72],  map.getSize()) 
             }
           },
          complete: function(data) {
@@ -2097,9 +2098,9 @@ $( document ).ready(function() {
     proj4.defs("EPSG:3812","+proj=lcc +lat_1=49.83333333333334 +lat_2=51.16666666666666 +lat_0=50.797815 +lon_0=4.359215833333333 +x_0=649328 +y_0=665262 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
         
     var kaart = new mapObj('map');
-    var kaartEvent = new mapEvents( kaart.map, kaart.vectorLayer, kaart.featureOverlay);
+    var kaartEvent = new mapEvents( kaart.map, kaart.vectorLayer, kaart.drawLayer);
     var ui = new initUI( kaart );
-    var adresFinder = new geocoder( 'adres', kaart.map , kaart.featureOverlay );
+    var adresFinder = new geocoder( 'adres', kaart.map , kaart.drawLayer );
     
 });
 
@@ -2166,11 +2167,12 @@ module.exports = function MapObj( mapID ){
         tracking: true
     });
     
-    var positionPt = new ol.Feature();
+    var positions = new ol.Collection([ new ol.Feature() ]); //databinding
 
     geolocation.on('change', function(evt) {
              var pt = new ol.geom.Point(geolocation.getPosition());
-             positionPt.setGeometry( pt );   
+			 var positionPt = new ol.Feature({name: "Mijn positie" , geometry: pt})
+             positions.setAt(0, positionPt)
         });
       
     /*basiskaart*/ 
@@ -2185,7 +2187,7 @@ module.exports = function MapObj( mapID ){
         matrixIds[z] = z;
     }
 
-   this.lufo = new ol.layer.Tile({
+    this.lufo = new ol.layer.Tile({
         extent: projectionExtent,
         visible: false,
         source: new ol.source.WMTS({
@@ -2236,9 +2238,11 @@ module.exports = function MapObj( mapID ){
             })
         });
     this.map.addControl(new ol.control.ScaleLine());
-    
-    this.featureOverlay = new ol.FeatureOverlay({
-        features: [positionPt],
+	
+    var featureOverlay = new ol.layer.Vector({
+        source: new ol.source.Vector({
+					features: positions ,
+				}),
         map: this.map,
         style:  new ol.style.Style({
             image: new ol.style.Circle({
@@ -2254,13 +2258,12 @@ module.exports = function MapObj( mapID ){
                 }),
             })       
     });  
-    
-            
+	this.drawLayer = positions;
 }
 
 },{}],8:[function(require,module,exports){
 
-module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
+module.exports = function mapEvents( map, vectorLayer, positions ){
     
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     var highlight;
@@ -2287,13 +2290,11 @@ module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
             dlg.dialog( "option", "title", laagName).dialog( "open" );   
         
             if (vfeature !== highlight) {
-                if (highlight) {
-                        featureOverlay.removeFeature(highlight);
+				 if (vfeature) {
+                        positions.remove(highlight);
                     }
-                if (vfeature) {
-                        featureOverlay.addFeature(vfeature);
-                    }
-                    highlight = vfeature;
+                 highlight = vfeature;
+				 positions.push(highlight);
                 } 
             } 
     }
@@ -2306,7 +2307,7 @@ module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
     
     dlg.on( "dialogclose", function( event, ui ) {
           if (highlight) {
-                featureOverlay.removeFeature(highlight);
+                positions.remove(highlight);
                 highlight = null;
           } 
     });

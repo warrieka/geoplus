@@ -58,11 +58,12 @@ module.exports = function MapObj( mapID ){
         tracking: true
     });
     
-    var positionPt = new ol.Feature();
+    var positions = new ol.Collection([ new ol.Feature() ]); //databinding
 
     geolocation.on('change', function(evt) {
              var pt = new ol.geom.Point(geolocation.getPosition());
-             positionPt.setGeometry( pt );   
+			 var positionPt = new ol.Feature({name: "Mijn positie" , geometry: pt})
+             positions.setAt(0, positionPt)
         });
       
     /*basiskaart*/ 
@@ -77,7 +78,7 @@ module.exports = function MapObj( mapID ){
         matrixIds[z] = z;
     }
 
-   this.lufo = new ol.layer.Tile({
+    this.lufo = new ol.layer.Tile({
         extent: projectionExtent,
         visible: false,
         source: new ol.source.WMTS({
@@ -128,9 +129,11 @@ module.exports = function MapObj( mapID ){
             })
         });
     this.map.addControl(new ol.control.ScaleLine());
-    
-    this.featureOverlay = new ol.FeatureOverlay({
-        features: [positionPt],
+	
+    var featureOverlay = new ol.layer.Vector({
+        source: new ol.source.Vector({
+					features: positions ,
+				}),
         map: this.map,
         style:  new ol.style.Style({
             image: new ol.style.Circle({
@@ -146,6 +149,5 @@ module.exports = function MapObj( mapID ){
                 }),
             })       
     });  
-    
-            
+	this.drawLayer = positions;
 }

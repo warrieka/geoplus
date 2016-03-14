@@ -44,19 +44,20 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
             var loc = locs[0];
             var coordinates = [loc.Location.X_Lambert72, loc.Location.Y_Lambert72];
             
-            if(marker){ featureOverlay.removeFeature(marker); }
-            marker = new ol.Feature({
-                geometry: new ol.geom.Point(coordinates), 
-                name: loc.FormattedAddress
+            if(marker){
+					featureOverlay.remove(marker); 
+				}
+			marker = new ol.Feature({
+					geometry: new ol.geom.Point(coordinates), 
+					name: loc.FormattedAddress
                 });
-
-            featureOverlay.addFeature(marker);       
+            featureOverlay.push(marker);       
             
             var view= map.getView();
-            view.fitExtent([loc.BoundingBox.LowerLeft.X_Lambert72, 
-                            loc.BoundingBox.LowerLeft.Y_Lambert72, 
-                            loc.BoundingBox.UpperRight.X_Lambert72,
-                            loc.BoundingBox.UpperRight.Y_Lambert72],  map.getSize()) 
+            view.fit([loc.BoundingBox.LowerLeft.X_Lambert72, 
+                        loc.BoundingBox.LowerLeft.Y_Lambert72, 
+                        loc.BoundingBox.UpperRight.X_Lambert72,
+                        loc.BoundingBox.UpperRight.Y_Lambert72],  map.getSize()) 
             }
           },
          complete: function(data) {

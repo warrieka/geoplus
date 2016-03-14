@@ -1,5 +1,5 @@
 
-module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
+module.exports = function mapEvents( map, vectorLayer, positions ){
     
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     var highlight;
@@ -26,13 +26,11 @@ module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
             dlg.dialog( "option", "title", laagName).dialog( "open" );   
         
             if (vfeature !== highlight) {
-                if (highlight) {
-                        featureOverlay.removeFeature(highlight);
+				 if (vfeature) {
+                        positions.remove(highlight);
                     }
-                if (vfeature) {
-                        featureOverlay.addFeature(vfeature);
-                    }
-                    highlight = vfeature;
+                 highlight = vfeature;
+				 positions.push(highlight);
                 } 
             } 
     }
@@ -45,7 +43,7 @@ module.exports = function mapEvents( map, vectorLayer, featureOverlay ){
     
     dlg.on( "dialogclose", function( event, ui ) {
           if (highlight) {
-                featureOverlay.removeFeature(highlight);
+                positions.remove(highlight);
                 highlight = null;
           } 
     });
