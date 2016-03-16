@@ -13,9 +13,9 @@ var getPage = function(page) {
         var $ = cheerio.load(body);  
         $('li.library-item').each(function(iter, elem) 
           {              
-             var title = $(elem).find('a').html();
+             var title = $(elem).find('a').text();
              var url = baseUri + $(elem).find('a').attr('href');
-             var info =  $(elem).find('p').html();
+             var info =  $(elem).find('p').text();
 
              var res = sync('GET', url, {});
              var $$ = cheerio.load(res.getBody('utf8'));
@@ -29,7 +29,7 @@ var getPage = function(page) {
           })
           requestCounter--;
           if( requestCounter == 0 ){
-              fs.writeFile("public/index.json", JSON.stringify(urls) )
+              fs.writeFile("public/antw.json", JSON.stringify(urls) )
           } 
       }
       else { console.log(err) }

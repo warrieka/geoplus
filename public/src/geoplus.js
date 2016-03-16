@@ -2380,8 +2380,7 @@ module.exports = function( kaart ){
     
     var downloadDlg = $( "#downloadDlg" ).dialog({ 
         autoOpen: false,
-        height:340,
-        width: 400,
+        height:340, width: 400,
         modal: true,
         buttons: {
             "Download Data": function() {
@@ -2393,21 +2392,52 @@ module.exports = function( kaart ){
             }
        }     
     });
+    var dataDlg = $( "#layerListDlg" ).dialog({ 
+        autoOpen: false,
+        height:420, width: 400,
+        minHeight: 420, minWidth: 480,
+        modal: false,
+        buttons: {
+            "Voeg Toe aan Kaart": function() {
+                var lst = document.getElementById("dataList");
+                var url = lst.options[lst.selectedIndex].value;
+                vectorSource.clear(1)
+                $.ajax({ url: url, dataType: 'json'}).done(function(resp) {
+                    var pages = resp.paging.pages 
+                    var features = od2olParser(resp.data);
+                    vectorSource.addFeatures(features);
+                    
+                    for ( var i = 2; i <= pages; ++i ){ 
+                        $.ajax({url: url +"?page="+ i , dataType: 'json'}).done(function(resp2) {
+                            var features = od2olParser(resp2.data);
+                            vectorSource.addFeatures(features);
+                        });
+                    }
+                }); 
+                $( this ).dialog( "close" );
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+            }
+       }   
+   });
+    
     $( "#toolbar" ).tooltip();
+    $( "#dataListBtn").button().click(function(){dataDlg.dialog( "open" ); }) ;
     $( "#saveBtn" ).button();
     $( "#saveOpenBtn" ).button();
-    $( "#infoBtn" ).button();
-    $("#basemapSwitch").buttonset();        
-//     var basiskaartBtn = new ol.dom.Input(document.getElementById('grb'));
-//     basiskaartBtn.bindTo('checked', map.basiskaart, 'visible');
-//     var lufoBtn = new ol.dom.Input(document.getElementById('lufo'));
-//     lufoBtn.bindTo('checked', map.lufo, 'visible');
-    
-    $.ajax({ url: "index.json" })
+    $( "#basemapSwitch").buttonset();
+
+    $.ajax({ url: "antw.json" })
     .done( function(resp)  {
+            resp.sort(function(a, b) {
+                    var textA = a.title.toUpperCase();
+                    var textB = b.title.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
             $.each(resp , function(i, elem)
             {
-                var title = elem.title;
+                var title = $("<div/>").html(elem.title).text() ;
                 var ds = elem.ds;
                 var info = elem.info;
                 var url = elem.url;
@@ -2421,8 +2451,6 @@ module.exports = function( kaart ){
         console.log(ero);
         alert("Sorry. Server gaf fout, de lagen werden niet geladen.");
     });
-      
-    $( "#infoBtn" ).click( function(){ showlayerInfo() });
     
     $('#dataList').change(function() {
             var pageUrl =  this.options[this.selectedIndex].value;
@@ -2450,31 +2478,17 @@ module.exports = function( kaart ){
     vectorLayer.setSource(vectorSource); 
     
     var displayData = function( url ) { 
-        showlayerInfo();
-        vectorSource.clear(1)
-        $.ajax({ url: url, dataType: 'json'}).done(function(resp) {
-            var pages = resp.paging.pages 
-            var features = od2olParser(resp.data);
-            vectorSource.addFeatures(features);
-            
-            for ( var i = 2; i <= pages; ++i ){ 
-                $.ajax({url: url +"?page="+ i , dataType: 'json'}).done(function(resp2) {
-                    var features = od2olParser(resp2.data);
-                    vectorSource.addFeatures(features);
-                });
-            }
-        });     
+        showlayerInfo();    
     }
 
     var showlayerInfo = function(){
          var lst = document.getElementById("dataList");
          var laagName = lst.options[lst.selectedIndex].text;
-         if( laagName == "" ){return;}
          var laagInfo = $(lst.options[lst.selectedIndex]).attr( "data-info" );
          var laagUrl =  $(lst.options[lst.selectedIndex]).attr( "data-url" );
-         var msg = "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
-         dlg.html(msg);
-         dlg.dialog( "option", "title", laagName).dialog( "open" );   
+         var msg = "<h2>" + laagName + "</h2>"
+             msg += "<p>"+ laagInfo +"</p><a target='_blank' href='"+ laagUrl +"'>Meer Info</a>";
+         $("#layerInfo").html(msg);
     }      
 }
 },{"./downloadEvent.js":4,"./od2ol3parser.js":9}]},{},[6]);

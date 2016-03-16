@@ -135,6 +135,7 @@ app.use(function(err, req, res, next){
   console.error(err.stack);
   res.status(500).send('Er liep iets fout!');
 });
+
 /*start the server*/
 var server = app.listen(process.env.PORT || 3000, '127.0.0.1', function () {
   var host = server.address().address

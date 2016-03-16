@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>Geoplus</title>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <!--[if IE]>
     <script type="text/javascript">
      //redirect if old IE
@@ -20,16 +20,11 @@
         <script src="src/geoplus.js" type="text/javascript"></script>
   </head>
   <body>
-<a href="https://github.com/warrieka/geoplus" target="_blank">
-<img style="height:100px ;position: absolute; top: 0; right: 0; border: 0; z-index:999999" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
-
        <div id="toolbar" class="ui-widget-header ui-corner-all">
               <img height=20 alt="Geo+"  src="images/logo.png" />
               <label for="dataList">Laag: </label>            
-              <select class="listBox" id="dataList" title="Selecteer een laag"> 
-                <option></option>
-              </select> 
-              <button id="infoBtn" type="button" title="Meer info over de laag" >Info</button>
+              
+              <button id="dataListBtn" type="button" title="Kies een laag" >Lagen</button>
               <button id="saveOpenBtn" type="button" title="Sla de laag op naar een GIS-bestand" >Opslaan</button>
               
                <span id="basemapSwitch" title="Wissel van achtergrond">
@@ -41,6 +36,18 @@
       <input id="adres" placeholder="Straat Huisnummer" />  
       <div id="map" ></div>
       <div id="info" class="dlg" ><div/>
+      <div id="layerListDlg" title="Kies een laag" class="dlg" >
+            <table style="width:100%"><tr>
+                 <td valign="top">  
+                    <select size="14" class="listBox" id="dataList" title="Selecteer een laag"> 
+                    </select>        
+                </td>
+                <td valign="top">  
+                    <span id="layerInfo"></span>
+                </td>
+            </tr></table>
+        </div>
+      <div/>
       
       <div id="downloadDlg" title="Opslaan Als">
             <div>Formaat:</div>
