@@ -1,3 +1,4 @@
+var ol = require('openlayers');
 
 module.exports = function geocoder( geocoderInputID, map , featureOverlay){
     var marker;

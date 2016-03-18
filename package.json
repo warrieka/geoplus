@@ -5,29 +5,36 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "prestart": "browserify src/main.js -o public/src/geoplus.js"
+    "prestart": "browserify src/main.js -o public/src/geoplus.js",
+    "build": "browserify src/main.js | uglifyjs --compress --output public/src/geoplus.js"
   },
   "keywords": [
     "opendata",
-    "gis",
+    "gis", "gent",
     "antwerpen"
   ],
   "author": "Kay Warrie",
   "license": "MIT",
   "dependencies": {
-    "sync-request":  "^3.0.0",
-	"shp-write": "^0.2.5",
+    "sync-request": "^3.0.0",
+    "shp-write": "^0.2.5",
     "cheerio": "^0.18.0",
-    "express": "^4.11.0",
     "request": "^2.51.0",
     "terraformer": "^1.0.4",
-    "terraformer-arcgis-parser": "^1.0.4"
+    "terraformer-arcgis-parser": "^1.0.4",
+    "express": "^4.11.0"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "^0.10.x"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/warrieka/geoplus.git"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "openlayers": "^3.14.2",
+    "uglify-js": "^2.6.2",
+    "watchify": "^3.7.0"
   }
 }

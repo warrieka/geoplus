@@ -1,3 +1,5 @@
+var ol = require('openlayers');
+
 module.exports = function(data){
         var gjsParser = new ol.format.GeoJSON();
         var features =  [];

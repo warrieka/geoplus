@@ -1,6 +1,6 @@
+var ol = require('openlayers');
 
 module.exports = function mapEvents( map, vectorLayer, highlightLayer ){
-    
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     var highlight;
     /*event handlers*/
@@ -20,7 +20,6 @@ module.exports = function mapEvents( map, vectorLayer, highlightLayer ){
             for(var key in props) {
                     msg += "<strong>"+ key + ":</strong> "+ props[ key ] +"<br/>";
                 }
-
             dlg.html(msg);
             dlg.dialog( "option", "title", laagName).dialog( "open" );   
         
@@ -30,30 +29,29 @@ module.exports = function mapEvents( map, vectorLayer, highlightLayer ){
                     }
                  highlight = vfeature;
 				 highlightLayer.push(highlight);
-                } 
             } 
-    }
-    
+        } 
+	}
     /*events*/
     var displayFeatureInfo = this.displayFeatureInfo;
     map.on('click', function(evt) {
 		var laagName;
 		if( $( "#tabs" ).tabs('option', 'active') === 0 ){
 			var lst = document.getElementById("dataList");
+			if(!lst || lst.selectedIndex < 0){return;}
 			laagName = lst.options[lst.selectedIndex].text;
 		}
 		else {
 			var lst = document.getElementById("gentDataList");
+			if(!lst || lst.selectedIndex < 0){return;}
 			laagName = lst.options[lst.selectedIndex].text;
 		}
         displayFeatureInfo(evt.pixel, map, laagName);
     });
-    
     dlg.on( "dialogclose", function( event, ui ) {
           if (highlight) {
                 highlightLayer.remove(highlight);
                 highlight = null;
           } 
     });
-    
 }   

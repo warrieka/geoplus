@@ -2,6 +2,7 @@ var download = require('./download.js');
 var openPost = require('./openPost.js');
 var ArcGIS = require('terraformer-arcgis-parser');
 var shpwrite = require('shp-write');
+var ol = require('openlayers');
 
 module.exports = function(vecSrc, laagName){
         //return if no data in layer
@@ -29,7 +30,7 @@ module.exports = function(vecSrc, laagName){
 			try {
 				shpwrite.download(gjs, opt);
 			}
-			catch {
+			catch(err) {
 				openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: JSON.stringify(gjs), outputName: laagName +".zip"}, "_blank")
 			}
         }

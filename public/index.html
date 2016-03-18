@@ -8,31 +8,31 @@
       window.location = "notsupported.html";
     </script>
     <![endif]-->
-        <!--external depedency stuff-->
+    <!--depedencies-->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/ui-lightness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="css/ol.css" type="text/css">
-    <script src="src/ol-debug.js" type="text/javascript"></script>
     <script src="src/proj4.js" type="text/javascript"></script>
-    <!--My stuff-->
-        <link rel="stylesheet" href="css/geoplus.css">
-        <script src="src/geoplus.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/geoplus.css">
   </head>
   <body>
-       <div id="toolbar" class="ui-widget-header ui-corner-all">
-              <img height=20 alt="Geo+"  src="images/logo.png" />
-              <label for="dataList">Laag: </label>            
-              
-              <button id="dataListBtn" type="button" title="Kies een laag" >Lagen</button>
-              <button id="saveOpenBtn" type="button" title="Sla de laag op naar een GIS-bestand" >Opslaan</button>
-              
-               <span id="basemapSwitch" title="Wissel van achtergrond">
-                    <input type="radio" id="lufo" name="basemapSwitch"/><label for="lufo">Luchtfoto</label>
-                    <input type="radio" id="basiskaart" name="basemapSwitch" checked="checked" />
-					<label for="basiskaart">GRB</label>
-               </span>
-       </div>         
+      <!--toolbar-->
+      <div id="toolbar" class="ui-widget-header ui-corner-all">
+		  <img height="20" alt="Geo+"  src="images/logo.png" />      
+		  
+		  <button id="dataListBtn" type="button" title="Kies een laag" >Lagen</button>
+		  <button id="saveOpenBtn" type="button" 
+				  title="Sla de laag op naar een GIS-bestand" >Opslaan</button>
+		  
+		   <span id="basemapSwitch" title="Wissel van achtergrond">
+			   <input type="radio" id="lufo" name="basemapSwitch"/>
+			   <label for="lufo">Luchtfoto</label></input>
+			   <input type="radio" id="basiskaart" name="basemapSwitch" checked="checked" />
+			   <label for="basiskaart">GRB</label></input>
+		   </span>
+		   <span style="float:right;"><a href="https://github.com/warrieka/geoplus">Github</a></span>
+      </div>         
       <!--map-->
       <input id="adres" placeholder="Straat nr, Gemeente" />  
       <div id="map" ></div>
@@ -44,13 +44,13 @@
 		<div id="tabs">
 		  <ul>
 			<li><a href="#tabs-1">Antwerpen</a></li>
-			<li><a href="#tabs-2">Gent</a></li>
+			<li><a href="#tabs-2"  >Gent</a></li>
 		  </ul>
 		  <div id="tabs-1">
 			<table style="width:100%"><tr>                
 				<td valign="top">  
-					<select  style="width:180px; overflow: auto;" size="10" 
-							 class="listBox" id="dataList" title="Selecteer een laag"> 
+					<select style="width:180px; overflow: auto;" size="10" 
+							class="listBox" id="dataList" title="Selecteer een laag"> 
 					</select>        
 				</td>
 				<td valign="top">  
@@ -61,8 +61,8 @@
 		  <div id="tabs-2">
 			<table style="width:100%"><tr> 
 			  <td valign="top">  
-				  <select style="width:180px; overflow: auto;"  size="10" 
-						  class="listBox" id="gentDataList" title="Selecteer een laag"></select>        
+				<select style="width:180px; overflow: auto;"  size="10" 
+						class="listBox" id="gentDataList" title="Selecteer een laag"></select>
 			  </td>
 			  <td valign="top">  
 				  <span id="gentLayerInfo"></span>
@@ -97,6 +97,7 @@
               </select> 
             </div>
       </div>
-      
+  
+	<script src="src/geoplus.js" type="text/javascript"></script>
   </body>
 </html>

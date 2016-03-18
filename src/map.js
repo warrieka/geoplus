@@ -1,3 +1,4 @@
+var ol = require('openlayers');
 
 module.exports = function MapObj( mapID ){
     var styles = {
@@ -122,9 +123,9 @@ module.exports = function MapObj( mapID ){
             layers: [ this.basiskaart, this.lufo, this.vectorLayer],
             view: new ol.View({
                 projection: 'EPSG:31370',
-                center: [152223, 213544],
+                center: [132000, 190000],
                 extent: projectionExtent,              
-                zoom: 4,
+                zoom: 3,
                 maxZoom: 16
             })
         });

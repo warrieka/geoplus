@@ -1,4 +1,4 @@
-    
+var ol = require('openlayers');
 var od2olParser = require('./od2ol3parser.js')
 var downloadEvent = require('./downloadEvent.js');
 
@@ -8,7 +8,7 @@ module.exports = function( kaart ){
 	var vectorSource = new ol.source.Vector({projection: 'EPSG:31370'});
 	var activeLayer ; 
     
-    var dlg = $( "#info" ).dialog({ autoOpen: false });
+    var dlg = $( "#info" ).dialog({autoOpen: false});
     
     var downloadDlg = $( "#downloadDlg" ).dialog({ 
         autoOpen: false,
@@ -62,11 +62,18 @@ module.exports = function( kaart ){
             "Cancel": function() {
                 $( this ).dialog( "close" );
             }
-       }   
-    });
+        }   , 
+		resize: function( event, ui ) {
+			var antList = document.getElementById("dataList");
+			var gentList = document.getElementById("gentDataList");
+			var height = ui.size.height;
+			antList.setAttribute("size", Math.round( height / 21 ) -10 );
+			gentList.setAttribute("size", Math.round( height / 21 ) -10 );
+		}
+	});
     $( "#tabs" ).tabs();
     $( "#toolbar" ).tooltip();
-    $( "#dataListBtn").button().click(function(){dataDlg.dialog( "open" ); }) ;
+    $( "#dataListBtn").button().click(function(){dataDlg.dialog("open"); }) ;
     $( "#saveBtn" ).button();
     $( "#saveOpenBtn" ).button();
     $( "#basemapSwitch").buttonset();
