@@ -1,10 +1,10 @@
 
-module.exports = function mapEvents( map, vectorLayer, positions ){
+module.exports = function mapEvents( map, vectorLayer, highlightLayer ){
     
     var dlg = $( "#info" ).dialog({ autoOpen: false });
     var highlight;
     /*event handlers*/
-    this.displayFeatureInfo = function(pixel, map) {
+    this.displayFeatureInfo = function(pixel, map, laagName) {
         var vfeature, vlayer; 
         map.forEachFeatureAtPixel(pixel, function(feature, layer) {
             vfeature = feature;
@@ -13,24 +13,23 @@ module.exports = function mapEvents( map, vectorLayer, positions ){
         if (vfeature && vlayer == vectorLayer ) {
             var props = vfeature.getProperties();
             delete props.geometry;
+			delete props.description;
             
             var msg = "";
             
             for(var key in props) {
                     msg += "<strong>"+ key + ":</strong> "+ props[ key ] +"<br/>";
                 }
-            var lst = document.getElementById("dataList")
-            var laagName = lst.options[lst.selectedIndex].text;
 
             dlg.html(msg);
             dlg.dialog( "option", "title", laagName).dialog( "open" );   
         
             if (vfeature !== highlight) {
 				 if (vfeature) {
-                        positions.remove(highlight);
+                        highlightLayer.remove(highlight);
                     }
                  highlight = vfeature;
-				 positions.push(highlight);
+				 highlightLayer.push(highlight);
                 } 
             } 
     }
@@ -38,12 +37,21 @@ module.exports = function mapEvents( map, vectorLayer, positions ){
     /*events*/
     var displayFeatureInfo = this.displayFeatureInfo;
     map.on('click', function(evt) {
-        displayFeatureInfo(evt.pixel, map);
+		var laagName;
+		if( $( "#tabs" ).tabs('option', 'active') === 0 ){
+			var lst = document.getElementById("dataList");
+			laagName = lst.options[lst.selectedIndex].text;
+		}
+		else {
+			var lst = document.getElementById("gentDataList");
+			laagName = lst.options[lst.selectedIndex].text;
+		}
+        displayFeatureInfo(evt.pixel, map, laagName);
     });
     
     dlg.on( "dialogclose", function( event, ui ) {
           if (highlight) {
-                positions.remove(highlight);
+                highlightLayer.remove(highlight);
                 highlight = null;
           } 
     });

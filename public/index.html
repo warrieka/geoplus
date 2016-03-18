@@ -29,33 +29,62 @@
               
                <span id="basemapSwitch" title="Wissel van achtergrond">
                     <input type="radio" id="lufo" name="basemapSwitch"/><label for="lufo">Luchtfoto</label>
-                    <input type="radio" id="basiskaart" name="basemapSwitch" checked="checked" /><label for="basiskaart">GRB</label>
+                    <input type="radio" id="basiskaart" name="basemapSwitch" checked="checked" />
+					<label for="basiskaart">GRB</label>
                </span>
        </div>         
-       
-      <input id="adres" placeholder="Straat Huisnummer" />  
+      <!--map-->
+      <input id="adres" placeholder="Straat nr, Gemeente" />  
       <div id="map" ></div>
+	  
+	  <!--dialogs-->
       <div id="info" class="dlg" ><div/>
+	  
       <div id="layerListDlg" title="Kies een laag" class="dlg" >
-            <table style="width:100%"><tr>
-                 <td valign="top">  
-                    <select size="14" class="listBox" id="dataList" title="Selecteer een laag"> 
-                    </select>        
-                </td>
-                <td valign="top">  
-                    <span id="layerInfo"></span>
-                </td>
-            </tr></table>
-        </div>
-      <div/>
+		<div id="tabs">
+		  <ul>
+			<li><a href="#tabs-1">Antwerpen</a></li>
+			<li><a href="#tabs-2">Gent</a></li>
+		  </ul>
+		  <div id="tabs-1">
+			<table style="width:100%"><tr>                
+				<td valign="top">  
+					<select  style="width:180px; overflow: auto;" size="10" 
+							 class="listBox" id="dataList" title="Selecteer een laag"> 
+					</select>        
+				</td>
+				<td valign="top">  
+					<span id="layerInfo"></span>
+				</td>
+			</tr></table>
+		  </div>
+		  <div id="tabs-2">
+			<table style="width:100%"><tr> 
+			  <td valign="top">  
+				  <select style="width:180px; overflow: auto;"  size="10" 
+						  class="listBox" id="gentDataList" title="Selecteer een laag"></select>        
+			  </td>
+			  <td valign="top">  
+				  <span id="gentLayerInfo"></span>
+			  </td>
+			</tr></table>
+		  </div>
+		</div>
+      </div>
       
       <div id="downloadDlg" title="Opslaan Als">
             <div>Formaat:</div>
             <div id="radio">
-                <input type="radio" id="geoJsonChk" name="radio" checked><label for="geoJsonChk">GeoJSON</label><br/>
-                <input type="radio" id="gpxChk" name="radio" ><label for="gpxChk">GPX</label><br/>
-                <input type="radio" id="esriJSChk" name="radio"><label for="esriJSChk">ESRI JSON</label><br/>
-                <input type="radio" id="shpChk" name="radio"><label for="shpChk">ESRI Shapefile (onstabiel)</label><br/>
+                <input type="radio" id="geoJsonChk" name="radio" checked>
+					<label for="geoJsonChk">GeoJSON</label></input><br/>
+                <input type="radio" id="gpxChk" name="radio" >
+					<label for="gpxChk">GPS eXchange format (GPX)</label></input><br/>
+                <input type="radio" id="esriJSChk" name="radio">
+					<label for="esriJSChk">ESRI JSON</label></input><br/>
+                <input type="radio" id="shpChk" name="radio">
+					<label for="shpChk">ESRI Shapefile (altijd WG84)</label></input><br/>
+				<input type="radio" id="gmlChk" name="radio">
+					<label for="gmlChk">Geographic Markup Language(GML)</label></input><br/>
             </div><br/>
             <div>Coördinaatsysteem:</div>
             <div style="padding-left:2em">

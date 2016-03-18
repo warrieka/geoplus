@@ -1,17 +1,15 @@
 var download = require('./download.js');
 var openPost = require('./openPost.js');
-var ArcGIS = require('terraformer-arcgis-parser')
+var ArcGIS = require('terraformer-arcgis-parser');
+var shpwrite = require('shp-write');
 
-module.exports = function(vecSrc){
-        
+module.exports = function(vecSrc, laagName){
+        //return if no data in layer
         if( !(vecSrc && vecSrc.getFeatures().length) ){ return; }
-        
-        var lst = document.getElementById("dataList");
-        var laagName = lst.options[lst.selectedIndex].text;
-        
+		//get CRS
         var crslst = document.getElementById("crsList");
         var outSRS = crslst.options[crslst.selectedIndex].value;
-        
+        //get File
         if( document.getElementById('geoJsonChk').checked ){
             var gjsParser = new ol.format.GeoJSON();
             var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
@@ -20,9 +18,20 @@ module.exports = function(vecSrc){
         }
         else if( document.getElementById('shpChk').checked ){
             var gjsParser = new ol.format.GeoJSON();
-            var gjs = gjsParser.writeFeatures( vecSrc.getFeatures(), 
-                                  {dataProjection: 'EPSG:4326', featureProjection:'EPSG:31370'});       
-            openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: gjs, outputName: laagName +".zip"}, "_blank")
+            var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
+                                  {dataProjection: 'EPSG:4326', featureProjection:'EPSG:31370'}) );       
+            var opt = {
+				folder: laagName.replace("/", "_"),  
+				types: { point: laagName.replace("/", "_") + '_points',
+					     polygon: laagName.replace("/", "_") + '_polygons',
+				         line: laagName.replace("/", "_") + '_lines' }
+				}
+			try {
+				shpwrite.download(gjs, opt);
+			}
+			catch {
+				openPost('POST', "http://ogre.adc4gis.com/convertJson", { json: JSON.stringify(gjs), outputName: laagName +".zip"}, "_blank")
+			}
         }
         else if( document.getElementById('gpxChk').checked ){
             var ftype = vecSrc.getFeatures()[0].getGeometry().getType();
@@ -32,7 +41,7 @@ module.exports = function(vecSrc){
             else {
                 var gpxParser = new ol.format.GPX();
                 var gpx = gpxParser.writeFeatures( vecSrc.getFeatures(),
-                                        { dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
+                                     {dataProjection:'EPSG:4326', featureProjection:'EPSG:31370'});
                 download( gpx, laagName +".gpx" , "text/plain");
             }
         }
@@ -40,7 +49,6 @@ module.exports = function(vecSrc){
             var gjsParser = new ol.format.GeoJSON();
             var gjs = JSON.parse( gjsParser.writeFeatures( vecSrc.getFeatures(), 
                                         {dataProjection: outSRS, featureProjection:'EPSG:31370'} ));
-            
             var arcjs =  ArcGIS.convert( gjs );
             
             var esriGeometry;
@@ -96,5 +104,34 @@ module.exports = function(vecSrc){
                 features: arcjs 
             }                   
             download( JSON.stringify(arcjsFull), laagName +".json" , "text/plain");
+        }
+		else if( document.getElementById('gmlChk').checked ){
+            var gmlHead = '<featureMembers xmlns="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd"></featureMembers>';
+			var parser = new DOMParser();
+			var gmlDoc = parser.parseFromString(gmlHead,"text/xml");
+
+			var gmlParser = new ol.format.GML3({srsName: outSRS,
+								featureNS: "http://opendata.antwerpen.be", featureType: "opendata"});
+				
+			vecSrc.forEachFeature(function(feature){
+				var props = feature.getProperties();
+				var featureMember = gmlDoc.createElementNS("http://www.opengis.net/gml","featureMember");
+				var openDataNode = gmlDoc.createElementNS("http://opendata.antwerpen.be", "opendata");
+				
+				var geomNode = gmlParser.writeGeometryNode( feature.getGeometry(),
+						{dataProjection: outSRS, featureProjection:'EPSG:31370'});
+				openDataNode.insertBefore( geomNode , null );
+				geomNode.firstChild.namespaceURI = "http://www.opengis.net/gml"
+				for(var key in props) {
+					var attrNode = gmlDoc.createElement( key );
+					attrNode.innerHTML = props[ key ];
+					openDataNode.insertBefore( attrNode , null );
+				} 	
+				featureMember.insertBefore( openDataNode, null);
+				gmlDoc.firstChild.insertBefore( featureMember, null);
+			});
+
+			var xmls = new XMLSerializer();
+            download( xmls.serializeToString(gmlDoc), laagName +".gml" , "text/xml");
         }
     }

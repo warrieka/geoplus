@@ -8,15 +8,14 @@ module.exports = function geocoder( geocoderInputID, map , featureOverlay){
         url: "http://loc.api.geopunt.be/geolocation/Suggestion",
         dataType: "jsonp",
         data: {
-            q: request.term + ", Antwerpen",
-            c: 20
+            q: request.term, c: 5
         },
         success: function( data ) {
         var straten = [];
         $.each( data.SuggestionResult, function( index, value ){
-                var straat = value.substring( 0, value.lastIndexOf(",")).trim() ;
-                if( straat != "" ){
-                    straten.push( straat );
+                //var straat = value.substring( 0, value.lastIndexOf(",")).trim() ;
+                if( value != "" ){
+                    straten.push( value );
                 }
             });
         //filter dubplicates
