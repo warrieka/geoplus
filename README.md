@@ -12,12 +12,12 @@ Nederlands
 ###Doelstelling 
 
 Geoplus is een webapp tegen de opendata infrastructuur van de steden Gent en Antwerpen.
-Deze steden bieden een groot deel van hun data waaronder geodata als opendata aan. Externen kunnen via http://data.stad.gent en http://opendata.antwerpen.be deze gegevens downloaden. Voor gewone burgers die data willen raadplegen is het mogelijk dit te doen via google earth met een kml-file die ze kunnen downloaen of bekijken via de preview Map. Programmeurs kunnen de JSON of XML formaten gebruiken. 
+Deze steden bieden een groot deel van hun data waaronder geodata als opendata aan. Externen kunnen via http://data.stad.gent en http://opendata.antwerpen.be deze gegevens downloaden. Voor gewone burgers die data willen raadplegen is het mogelijk dit te doen via google earth met een kml-file die ze kunnen downloaden of bekijken via de preview Map. Programmeurs kunnen de JSON of XML formaten gebruiken. 
 
-Voor niet-programerdende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook voor Openstreetmap, GPS- en geocaching hobbyisten zijn deze formaten niet geschikt. 
+Voor niet-programerende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook voor Openstreetmap, GPS- en geocaching hobbyisten zijn deze formaten niet geschikt. 
 Voor deze gebruikers probeert deze app een oplossing te bieden. 
 
-Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat, zodat ze die op hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld GEOJSON, GML voor QGIS of Shpaefile of ESRI json voor Arcgis voor analyse en cartografie. Openstreetmappers kunnen de gewenste gegevens opladen via GPX, ook geocachers en andere gebruikers geavanceerde GPS-toestellen gebruiken GPX. GML is een OGC-standaard voor  Geografsche data in XMLen GEOJSON is een standaard in JSON.
+Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat, zodat ze die op hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld GEOJSON, GML voor QGIS of Shapefile of ESRI json voor Arcgis voor analyse en cartografie. Openstreetmappers kunnen de gewenste gegevens opladen via GPX, ook geocachers en andere gebruikers geavanceerde GPS-toestellen gebruiken GPX. GML is een OGC-standaard voor  Geografsche data in XMLen GEOJSON is een standaard in JSON.
 
 ###Werking
 
