@@ -4,7 +4,7 @@ Geoplus
 English
 ----
 GeoPlus is a web app on the opendata infrastructure of Antwerp and Ghent.
-With this application, a non-programmer can download the data from the opendata-service in a common format for geodata and use in their own (desktop) applications. For example, for analysis or cartography.
+With this application, a non-programmer can view and download the data from the opendata-service in a common format for geodata and use in their own (desktop) applications. For example, for analysis or cartography.
 
 Nederlands 
 ----
@@ -17,7 +17,7 @@ Deze steden bieden een groot deel van hun data waaronder geodata als opendata aa
 Voor niet-programerende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook voor Openstreetmap, GPS- en geocaching hobbyisten zijn deze formaten niet geschikt. 
 Voor deze gebruikers probeert deze app een oplossing te bieden. 
 
-Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat, zodat ze die op hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld GEOJSON, GML voor QGIS of Shapefile of ESRI json voor Arcgis voor analyse en cartografie. Openstreetmappers kunnen de gewenste gegevens opladen via GPX, ook geocachers en andere gebruikers geavanceerde GPS-toestellen gebruiken GPX. GML is een OGC-standaard voor  Geografsche data in XMLen GEOJSON is een standaard in JSON.
+Met deze toepassing kan een niet-programmeur de data van de opendata-service downloaden in een courant geodata formaat, zodat ze die op hun eigen (desktop) toepassing gebruiken. Bijvoorbeeld GEOJSON, GML voor QGIS of Shapefile of ESRI json voor Arcgis voor analyse en cartografie. Openstreetmappers kunnen de gewenste gegevens opladen via GPX, ook geocachers en andere gebruikers geavanceerde GPS-toestellen gebruiken GPX. GML is een OGC-standaard voor  Geografsche data in XML en GEOJSON is een standaard in JSON.
 
 ###Werking
 
@@ -37,7 +37,7 @@ of voor gent via kml
 
 De json of kml wordt geparseerd en in een openlayers vectorlaag geladen.
 
-De gebruiker kan de voledige laag bekijken en bevragen. 
+De gebruiker kan de volledige laag bekijken en bevragen. 
 Indien ze de laag geschikt vindt haar doelstelling, kan de gebruiker deze downloaden in een gewenst formaat en CRS.
 Op dit moment wordt GEOJSON - GPX en ESRI Json, Shapefile en GML onsteund als output formaten.
 Deze worden browserside gegenereerd. 
