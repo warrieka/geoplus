@@ -11,7 +11,7 @@ Nederlands
 
 ###Doelstelling 
 
-Geoplus is een webapp tegen de opendata infrastructuur van de steden Gent Antwerpen.
+Geoplus is een webapp tegen de opendata infrastructuur van de steden Gent en Antwerpen.
 Deze steden bieden een groot deel van hun data waaronder geodata als opendata aan. Externen kunnen via http://data.stad.gent en http://opendata.antwerpen.be deze gegevens downloaden. Voor gewone burgers die data willen raadplegen is het mogelijk dit te doen via google earth met een kml-file die ze kunnen downloaen of bekijken via de preview Map. Programmeurs kunnen de JSON of XML formaten gebruiken. 
 
 Voor niet-programerdende  technische eindgebruikers zoals landmeters, studiebureua's, cartografen, architecten, stedebouwkundigen, ... en ook voor Openstreetmap, GPS- en geocaching hobbyisten zijn deze formaten niet geschikt. 
